@@ -20,7 +20,13 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "your-secret-key-here"
+
 app.config["UPLOAD_FOLDER"] = os.path.join("static", "uploads")
+
+# Automatically create the uploads folder if it doesn't exist
+# This is important on Render because the folder isn't in GitHub
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+# exist_ok=True means "don't crash if the folder already exists"
 
 # Only allow image file types to be uploaded
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
