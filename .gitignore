@@ -1,0 +1,13 @@
+# Don't upload the database (Render will create a fresh one)
+instance/
+
+# Don't upload student photos (too large for GitHub)
+static/uploads/
+
+# Python cache files (not needed)
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code settings
+.vscode/

@@ -1,0 +1,68 @@
+<!-- detail.html -->
+<!-- Page 4: Shows the full details of one specific student -->
+
+{% extends "base.html" %}
+
+{% block title %}{{ student.first_name }}'s Profile — Student Portal{% endblock %}
+
+{% block content %}
+
+<section class="detail-section">
+
+  <!-- Profile card: photo + name + status badge -->
+  <div class="profile-card">
+    <img src="{{ url_for('static', filename='uploads/' + student.image) }}"
+         alt="{{ student.first_name }}'s photo"
+         class="profile-photo"/>
+    <h3>{{ student.first_name }} {{ student.last_name }}</h3>
+    <span class="status-badge">{{ student.status }}</span>
+  </div>
+
+  <!-- Details panel -->
+  <div class="detail-panel">
+
+    <!-- Personal Information -->
+    <div class="detail-header">Personal Information</div>
+    <div class="detail-grid">
+      <p><strong>Email:</strong> {{ student.email }}</p>
+      <p><strong>Gender:</strong> {{ student.gender }}</p>
+      <p><strong>Phone Number:</strong> {{ student.phone }}</p>
+      <p><strong>Date Of Birth:</strong> {{ student.dob }}</p>
+      <p><strong>Address:</strong> {{ student.address }}</p>
+    </div>
+
+    <!-- Other Information -->
+    <div class="detail-header">Other Information</div>
+    <div class="detail-grid">
+      <p><strong>State Of Origin:</strong> {{ student.state }}</p>
+      <p><strong>Local Govt:</strong> {{ student.lga }}</p>
+    </div>
+
+    <!-- Academic Information -->
+    <div class="detail-header">Academics Related Information</div>
+    <div class="detail-grid">
+      <p><strong>Next Of Kin:</strong> {{ student.next_of_kin }}</p>
+      <p><strong>JAMB Score:</strong> {{ student.jamb_score }}</p>
+      <p><strong>Status:</strong> {{ student.status }}</p>
+
+      <!-- Change admission status (async — no page reload) -->
+      <div class="status-changer">
+        <label for="status-select">Change Status:</label>
+        <!-- data-id stores the student's ID so JavaScript knows which student to update -->
+        <select id="status-select" data-id="{{ student.id }}">
+          <option value="undecided">Undecided</option>
+          <option value="admitted">Admitted</option>
+          <option value="not admitted">Not Admitted</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+  <!-- Load the script that handles async status change -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+{% endblock %}

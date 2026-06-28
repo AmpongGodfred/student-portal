@@ -1,0 +1,57 @@
+<!-- students.html -->
+<!-- Page 3: Shows all students in a table -->
+
+{% extends "base.html" %}
+
+{% block title %}All Students — Student Portal{% endblock %}
+
+{% block content %}
+
+<section class="table-section">
+  <div class="table-info">Info! All students records table</div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>S/N</th>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>JAMB Score</th>
+          <th>Admission Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Loop through every student Flask sends to this page -->
+        <!-- 'students' is a list Python passes in; we'll set that up in app.py -->
+        {% for student in students %}
+        <tr>
+          <!-- loop.index gives us 1, 2, 3... automatically -->
+          <td>{{ loop.index }}</td>
+
+          <!-- Display full name -->
+          <td>{{ student.first_name }} {{ student.last_name }}</td>
+
+          <td>{{ student.gender }}</td>
+          <td>{{ student.jamb_score }}</td>
+          <td>{{ student.status }}</td>
+
+          <!-- View button: links to that specific student's detail page -->
+          <!-- student.id is the unique ID from the database -->
+          <td>
+            <a href="{{ url_for('detail', student_id=student.id) }}"
+               class="btn-view">
+              View
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}

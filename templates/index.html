@@ -1,0 +1,34 @@
+<!-- index.html -->
+<!-- This is Page 1: the Landing Page -->
+<!-- It extends base.html, so it automatically gets the navbar and footer -->
+
+{% extends "base.html" %}
+
+{% block title %}Home — Student Portal{% endblock %}
+
+{% block content %}
+
+  <!-- ── HERO / INTRO SECTION ───────────────────────────────── -->
+  <section class="hero">
+
+    <!-- Left side: text and button -->
+    <div class="hero-text">
+      <h1>Student Main Portal</h1>
+      <p>Unlock Student Portal registration, join us today for your online courses.</p>
+
+      <!-- Call-to-action button: takes user to the form page -->
+      <a href="{{ url_for('form') }}" class="btn-primary">Get Started</a>
+    </div>
+
+    <!-- Right side: illustration image -->
+    <div class="hero-image">
+      <!-- We'll add an image here later. For now a placeholder. -->
+      <img src="{{ url_for('static', filename='images/hero.png') }}"
+           alt="Students in a classroom"
+           onerror="this.style.display='none'"/>
+    </div>
+
+  </section>
+  <!-- ── END HERO SECTION ───────────────────────────────────── -->
+
+{% endblock %}

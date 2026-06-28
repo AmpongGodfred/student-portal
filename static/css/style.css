@@ -1,0 +1,451 @@
+/* style.css */
+/* All visual styling for the Student Portal lives here. */
+/* Organised by: Global → Navbar → Hero → Form → Table → Detail → Footer */
+
+
+/* ── GLOBAL RESET & BASE STYLES ──────────────────────────────────── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* makes sizing predictable — padding doesn't add to width */
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* makes footer stick to the bottom */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── NAVBAR ───────────────────────────────────────────────────────── */
+.navbar {
+  background-color: #6a0dad;       /* purple background */
+  display: flex;
+  justify-content: space-between;  /* logo on left, links on right */
+  align-items: center;
+  padding: 0 40px;
+  height: 60px;
+}
+
+.navbar-logo {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* The coloured part of the logo (the "o" dot effect) */
+.navbar-logo span {
+  color: #f4a261;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  color: #ffffff;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+
+.nav-links a:hover {
+  opacity: 0.75;
+}
+
+
+/* ── BUTTONS ──────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-block;
+  background-color: #6a0dad;
+  color: #ffffff;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #550a9e;
+}
+
+.btn-view {
+  display: inline-block;
+  background-color: #17a2b8;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.btn-view:hover {
+  background-color: #138496;
+}
+
+
+/* ── HERO / LANDING PAGE ──────────────────────────────────────────── */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 80px 10%;
+  flex: 1;                 /* fills available vertical space */
+  gap: 40px;
+}
+
+.hero-text {
+  max-width: 500px;
+}
+
+.hero-text h1 {
+  font-size: 2.4rem;
+  color: #2c2c2c;
+  margin-bottom: 16px;
+}
+
+.hero-text p {
+  font-size: 1.05rem;
+  color: #6a0dad;
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.hero-image img {
+  max-width: 420px;
+  width: 100%;
+}
+
+
+/* ── FORM PAGE ────────────────────────────────────────────────────── */
+.form-section {
+  padding: 40px 20px;
+  flex: 1;
+}
+
+.form-container {
+  background: #ffffff;
+  max-width: 860px;
+  margin: 0 auto;           /* centres the form horizontally */
+  padding: 36px 40px;
+  border-radius: 8px;
+  border: 1px solid #dce3f0;
+  background-color: #eaf0fb; /* light blue background like the screenshot */
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #6a0dad;
+  margin-bottom: 4px;
+  font-size: 1.5rem;
+}
+
+.form-subtitle {
+  text-align: center;
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+
+/* Grey header bars separating form sections */
+.form-group-header {
+  background-color: #5a6270;
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  margin: 20px 0 16px;
+}
+
+/* Two-column rows for paired inputs */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* two equal columns */
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 0.88rem;
+  color: #6a0dad;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+/* Styles all text inputs, selects, and textareas the same way */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group input[type="file"],
+.form-group select,
+.form-group textarea {
+  padding: 9px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #6a0dad;  /* purple border when field is active */
+}
+
+.form-group textarea {
+  resize: vertical;        /* user can resize vertically only */
+  min-height: 80px;
+}
+
+/* Radio button group layout */
+.radio-group {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.radio-group label {
+  color: #333;
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Centre the submit button */
+.form-group.center {
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Flash messages (error/success notifications) */
+.alert {
+  padding: 10px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.alert-error {
+  background-color: #fdecea;
+  color: #c0392b;
+  border: 1px solid #e74c3c;
+}
+
+.alert-success {
+  background-color: #eafaf1;
+  color: #1e8449;
+  border: 1px solid #27ae60;
+}
+
+
+/* ── STUDENTS TABLE PAGE ──────────────────────────────────────────── */
+.table-section {
+  padding: 40px 5%;
+  flex: 1;
+}
+
+/* The blue info bar at the top of the table */
+.table-info {
+  background-color: #d6eaf8;
+  border: 1px solid #aed6f1;
+  color: #1a5276;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.table-container {
+  overflow-x: auto;  /* horizontal scroll on small screens */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;   /* removes gaps between table borders */
+  background-color: #ffffff;
+}
+
+thead {
+  background-color: #6a0dad;
+  color: #ffffff;
+}
+
+thead th {
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.15s;
+}
+
+tbody tr:hover {
+  background-color: #f4eaff;  /* light purple on hover */
+}
+
+tbody td {
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6a0dad;
+}
+
+
+/* ── STUDENT DETAIL PAGE ──────────────────────────────────────────── */
+.detail-section {
+  display: flex;
+  gap: 30px;
+  padding: 40px 5%;
+  flex: 1;
+  align-items: flex-start;
+}
+
+/* Left card: photo + name + status */
+.profile-card {
+  background-color: #c8843a;   /* orange-brown like the screenshot */
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  min-width: 200px;
+  max-width: 220px;
+}
+
+.profile-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;          /* makes it a circle */
+  object-fit: cover;           /* fills the circle without distorting */
+  margin-bottom: 12px;
+  background-color: #aaa;
+}
+
+.profile-card h3 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.status-badge {
+  display: inline-block;
+  background-color: #17a2b8;
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+/* Right panel: all the student's details */
+.detail-panel {
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #dce3f0;
+  padding: 24px;
+}
+
+/* Blue section header bars */
+.detail-header {
+  background-color: #d6eaf8;
+  color: #1a5276;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 16px 0 12px;
+}
+
+/* Grid layout for detail fields */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+  padding: 0 8px;
+}
+
+.detail-grid p {
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* Status change dropdown area */
+.status-changer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.status-changer label {
+  font-size: 0.9rem;
+  color: #444;
+  font-weight: 500;
+}
+
+.status-changer select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+
+/* ── FOOTER ───────────────────────────────────────────────────────── */
+.footer {
+  background-color: #6a0dad;
+  color: #ffffff;
+  text-align: center;
+  padding: 16px;
+  font-size: 0.85rem;
+  margin-top: auto;   /* pushes footer to the bottom of the page */
+}
+
+
+/* ── RESPONSIVE (smaller screens) ────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    padding: 40px 6%;
+    text-align: center;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;   /* stack to single column on mobile */
+  }
+
+  .detail-section {
+    flex-direction: column;
+  }
+
+  .profile-card {
+    max-width: 100%;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

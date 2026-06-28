@@ -1,0 +1,142 @@
+<!-- form.html -->
+<!-- This is Page 2: the Student Registration Form -->
+
+{% extends "base.html" %}
+
+{% block title %}Register — Student Portal{% endblock %}
+
+{% block content %}
+
+<section class="form-section">
+  <div class="form-container">
+    <h2>Student Portal Form</h2>
+    <p class="form-subtitle">Please fill in all required information</p>
+
+    <!-- action="" means submit to the same URL (Flask handles it) -->
+    <!-- method="POST" means we're sending data to the server -->
+    <!-- enctype is required whenever a form has a file upload -->
+    <form action="{{ url_for('form') }}" method="POST" enctype="multipart/form-data">
+
+      <!-- ── PERSONAL INFORMATION ──────────────────────────── -->
+      <div class="form-group-header">Personal Information</div>
+
+      <!-- Photo upload -->
+      <div class="form-group">
+        <label for="image">Upload Image</label>
+        <input type="file" id="image" name="image" accept="image/*" required/>
+      </div>
+
+      <!-- Name row -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first_name">First Name</label>
+          <input type="text" id="first_name" name="first_name"
+                 placeholder="Enter First Name" required/>
+        </div>
+        <div class="form-group">
+          <label for="middle_name">Middle Name</label>
+          <input type="text" id="middle_name" name="middle_name"
+                 placeholder="Enter Middle Name"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="last_name">Last Name</label>
+          <input type="text" id="last_name" name="last_name"
+                 placeholder="Enter Last Name" required/>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email"
+                 placeholder="Enter Email Address" required/>
+        </div>
+      </div>
+
+      <!-- DOB and Gender row -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dob">Date Of Birth</label>
+          <input type="date" id="dob" name="dob" required/>
+        </div>
+        <div class="form-group">
+          <label>Gender</label>
+          <div class="radio-group">
+            <label><input type="radio" name="gender" value="male" required/> Male</label>
+            <label><input type="radio" name="gender" value="female"/> Female</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone and Address row -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="text" id="phone" name="phone"
+                 placeholder="Enter Phone Number" required/>
+        </div>
+        <div class="form-group">
+          <label for="address">Address</label>
+          <textarea id="address" name="address"
+                    placeholder="Enter Address" required></textarea>
+        </div>
+      </div>
+
+      <!-- State and LGA dropdowns (populated by states.js) -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="state">State Of Origin</label>
+          <select id="state" name="state" required>
+            <option value="" selected disabled>Select State</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="lga">Local Government</label>
+          <select id="lga" name="local-govt-area" required>
+            <option value="" selected disabled>Select Local Government</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Next of Kin -->
+      <div class="form-group">
+        <label for="next_of_kin">Next Of Kin</label>
+        <input type="text" id="next_of_kin" name="next_of_kin"
+               placeholder="Enter Name Of Next Of Kin" required/>
+      </div>
+
+      <!-- ── ACADEMIC INFORMATION ──────────────────────────── -->
+      <div class="form-group-header">Academics Related Information</div>
+
+      <!-- JAMB Score -->
+      <div class="form-group">
+        <label for="jamb_score">JAMB Score</label>
+        <input type="number" id="jamb_score" name="jamb_score"
+               placeholder="Enter JAMB Score" min="0" max="400" required/>
+      </div>
+
+      <!-- Flash messages: shown when something goes wrong -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Submit button -->
+      <div class="form-group center">
+        <button type="submit" class="btn-primary">Submit</button>
+      </div>
+
+    </form>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+  <!-- Load states.js AFTER the form exists in the page -->
+  <!-- This fills the State dropdown and wires up the LGA dropdown -->
+  <script src="{{ url_for('static', filename='js/states.js') }}"></script>
+{% endblock %}
