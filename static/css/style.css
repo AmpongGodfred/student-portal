@@ -25,13 +25,15 @@ a {
 }
 
 /* ── NAVBAR ───────────────────────────────────────────────────────── */
+/* ── NAVBAR ───────────────────────────────────────────────────────── */
 .navbar {
-  background-color: #6a0dad;       /* purple background */
+  background-color: #6a0dad;
   display: flex;
-  justify-content: space-between;  /* logo on left, links on right */
+  justify-content: space-between;
   align-items: center;
   padding: 0 40px;
   height: 60px;
+  position: relative;  /* needed for mobile dropdown positioning */
 }
 
 .navbar-logo {
@@ -40,7 +42,6 @@ a {
   color: #ffffff;
 }
 
-/* The coloured part of the logo (the "o" dot effect) */
 .navbar-logo span {
   color: #f4a261;
 }
@@ -48,6 +49,7 @@ a {
 .nav-links {
   list-style: none;
   display: flex;
+  align-items: center;
   gap: 30px;
 }
 
@@ -59,6 +61,65 @@ a {
 
 .nav-links a:hover {
   opacity: 0.75;
+}
+
+/* Hamburger button — hidden on desktop */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+/* ── MOBILE NAVBAR ────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 20px;
+  }
+
+  /* Show hamburger on mobile */
+  .hamburger {
+    display: block;
+  }
+
+  /* Hide nav links by default on mobile */
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    padding: 10px 0;
+    align-items: flex-start;
+  }
+
+  /* Show nav links when menu is open */
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links li {
+    width: 100%;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .nav-links li a,
+  .nav-links li .btn-logout {
+    display: block;
+    padding: 12px 8px;
+    width: 100%;
+    border-radius: 0;
+    background: none;
+    font-size: 1rem;
+  }
+
+  .nav-links li .btn-logout {
+    color: #ffffff;
+  }
 }
 
 

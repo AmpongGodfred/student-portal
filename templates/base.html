@@ -15,25 +15,32 @@
     <body>
 
     <!-- ── NAVBAR ─────────────────────────────────────────────── -->
-    <nav class="navbar">
-        <!-- Logo acts as a home link -->
-        <a href="{{ url_for('index') }}" class="navbar-logo">
-        Student<span>Portal</span>
-        </a>
+<!-- ── NAVBAR ─────────────────────────────────────────────── -->
+<nav class="navbar">
+  <!-- Logo -->
+  <a href="{{ url_for('index') }}" class="navbar-logo">
+    Student<span>Portal</span>
+  </a>
 
-        <!-- Navigation links -->
-        <ul class="nav-links">
-            <li><a href="{{ url_for('index') }}">Home</a></li>
+  <!-- Hamburger button (only visible on mobile) -->
+  <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu">
+    &#9776; <!-- This is the ☰ icon -->
+  </button>
 
-            {% if session.get("admin") %}
-                <li><a href="{{ url_for('form') }}">Add Student</a></li>
-                <li><a href="{{ url_for('students') }}">All Students</a></li>
-                <li><a href="{{ url_for('logout') }}" class="btn-logout">Logout</a></li>
-            {% else %}
-                <li><a href="{{ url_for('login') }}">Get Started</a></li>
-            {% endif %}
-        </ul>
-    </nav>
+  <!-- Navigation links -->
+  <ul class="nav-links" id="nav-links">
+    <li><a href="{{ url_for('index') }}">Home</a></li>
+
+    {% if session.get("admin") %}
+      <li><a href="{{ url_for('form') }}">Add Student</a></li>
+      <li><a href="{{ url_for('students') }}">All Students</a></li>
+      <li><a href="{{ url_for('logout') }}" class="btn-logout">Logout</a></li>
+    {% else %}
+      <li><a href="{{ url_for('login') }}">Get Started</a></li>
+    {% endif %}
+  </ul>
+</nav>
+<!-- ── END NAVBAR ─────────────────────────────────────────── -->
     <!-- ── END NAVBAR ─────────────────────────────────────────── -->
 
 
@@ -51,6 +58,17 @@
 
     <!-- Page-specific JavaScript block (optional per page) -->
     {% block scripts %}{% endblock %}
+
+    <!-- Hamburger menu toggle -->
+<script>
+  const hamburgerBtn = document.getElementById("hamburger-btn");
+  const navLinks = document.getElementById("nav-links");
+
+  hamburgerBtn.addEventListener("click", function () {
+    // Toggle the "open" class — CSS shows/hides the menu based on this
+    navLinks.classList.toggle("open");
+  });
+</script>
 
     </body>
 </html>
