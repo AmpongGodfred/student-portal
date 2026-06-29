@@ -1,5 +1,5 @@
 <!-- students.html -->
-<!-- Page 3: Shows all students in a table -->
+<!-- Page 3: Shows all students in a searchable, filterable table -->
 
 {% extends "base.html" %}
 
@@ -9,6 +9,59 @@
 
 <section class="table-section">
   <div class="table-info">Info! All students records table</div>
+
+  <!-- ── SEARCH & FILTER FORM ───────────────────────────────────── -->
+  <!-- method="GET" puts the search values in the URL, not hidden -->
+  <!-- This means you can bookmark or share a filtered view -->
+  <form method="GET" action="{{ url_for('students') }}" class="search-form">
+
+    <!-- Search by name -->
+    <input
+      type="text"
+      name="name"
+      placeholder="Search Record By Name Only"
+      value="{{ name }}"
+      class="search-input"
+    />
+    <!-- value="{{ name }}" keeps the typed name after searching -->
+
+    <!-- Filter by admission status -->
+    <select name="status" class="search-select">
+      <option value="">Select Admission Status</option>
+      <option value="undecided"    {% if status == "undecided"    %}selected{% endif %}>Undecided</option>
+      <option value="admitted"     {% if status == "admitted"     %}selected{% endif %}>Admitted</option>
+      <option value="not admitted" {% if status == "not admitted" %}selected{% endif %}>Not Admitted</option>
+    </select>
+    <!-- {% if status == "admitted" %}selected{% endif %} keeps the
+         dropdown on the right option after searching -->
+
+    <!-- Filter by gender -->
+    <select name="gender" class="search-select">
+      <option value="">Select Gender</option>
+      <option value="male"   {% if gender == "male"   %}selected{% endif %}>Male</option>
+      <option value="female" {% if gender == "female" %}selected{% endif %}>Female</option>
+    </select>
+
+    <!-- Filter by JAMB score -->
+    <input
+      type="number"
+      name="jamb"
+      placeholder="Enter JAMB Score"
+      value="{{ jamb }}"
+      class="search-input"
+    />
+
+    <!-- Search button -->
+    <button type="submit" class="btn-search">Search</button>
+
+  </form>
+  <!-- ── END SEARCH FORM ────────────────────────────────────────── -->
+
+  <!-- Show how many results were found -->
+  <p class="results-count">
+    {{ students|length }} student(s) found
+  </p>
+  <!-- students|length is a Jinja2 filter — counts items in the list -->
 
   <div class="table-container">
     <table>
@@ -23,35 +76,45 @@
         </tr>
       </thead>
       <tbody>
+        {% if students %}
+          {% for student in students %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ student.first_name }} {{ student.last_name }}</td>
+            <td>{{ student.gender }}</td>
+            <td>{{ student.jamb_score }}</td>
+            <td>{{ student.status }}</td>
+            <td class="action-buttons">
+              <!-- View button -->
+              <a href="{{ url_for('detail', student_id=student.id) }}"
+                class="btn-view">View</a>
 
-        <!-- Loop through every student Flask sends to this page -->
-        <!-- 'students' is a list Python passes in; we'll set that up in app.py -->
-        {% for student in students %}
-        <tr>
-          <!-- loop.index gives us 1, 2, 3... automatically -->
-          <td>{{ loop.index }}</td>
+              <!-- Edit button -->
+              <a href="{{ url_for('edit_student', student_id=student.id) }}"
+                class="btn-edit">Edit</a>
 
-          <!-- Display full name -->
-          <td>{{ student.first_name }} {{ student.last_name }}</td>
-
-          <td>{{ student.gender }}</td>
-          <td>{{ student.jamb_score }}</td>
-          <td>{{ student.status }}</td>
-
-          <!-- View button: links to that specific student's detail page -->
-          <!-- student.id is the unique ID from the database -->
-          <td>
-            <a href="{{ url_for('detail', student_id=student.id) }}"
-               class="btn-view">
-              View
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-
+              <!-- Delete button (inside a form because it's a POST request) -->
+              <form action="{{ url_for('delete_student', student_id=student.id) }}"
+                    method="POST"
+                    style="display:inline"
+                    onsubmit="return confirm('Are you sure you want to delete this student?')">
+                <button type="submit" class="btn-delete">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <!-- Show a message if no students match the search -->
+          <tr>
+            <td colspan="6" class="no-results">
+              No students found matching your search.
+            </td>
+          </tr>
+        {% endif %}
       </tbody>
     </table>
   </div>
+
 </section>
 
 {% endblock %}

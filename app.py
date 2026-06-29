@@ -3,7 +3,8 @@
 # Contains all configuration and route functions (one per page).
 
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
+from functools import wraps
 from models import db, Student
 from werkzeug.utils import secure_filename  # helps sanitize uploaded filenames
 
@@ -20,6 +21,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "your-secret-key-here"
+# Admin login credentials
+# In a real app these would be stored securely in environment variables
+app.config["ADMIN_USERNAME"] = "admin"
+app.config["ADMIN_PASSWORD"] = "portal2024"
 
 app.config["UPLOAD_FOLDER"] = os.path.join("static", "uploads")
 
@@ -47,6 +52,21 @@ def allowed_file(filename):
     return "." in filename and \
            filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# ── Helper: Login Required Decorator ───────────────────────────────
+def login_required(f):
+    """
+    This is a decorator — a function that wraps around other functions.
+    Add @login_required above any route to protect it.
+    If the user is not logged in, they get redirected to the login page.
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Check if "admin" key exists in the session
+        if "admin" not in session:
+            flash("Please log in to access this page.", "error")
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # ── ROUTE 1: Landing Page ──────────────────────────────────────────
 @app.route("/")
@@ -60,6 +80,7 @@ def index():
 
 # ── ROUTE 2: Portal Form Page ──────────────────────────────────────
 @app.route("/form", methods=["GET", "POST"])
+@login_required
 def form():
     """
     GET  → just show the empty form
@@ -146,24 +167,68 @@ def form():
 
 # ── ROUTE 3: Students Table Page ───────────────────────────────────
 @app.route("/students")
+@login_required
 def students():
     """
-    Fetches ALL students from the database and
-    passes them to the template to be displayed in a table.
+    Fetches students from the database with optional search/filter.
+    Search values come from the URL query string e.g:
+    /students?name=john&status=admitted&gender=male&jamb=280
+    request.args is a dictionary of everything in the URL after the ?
     """
 
-    # Query the database for every row in the students table
-    # .all() returns a Python list of Student objects
-    all_students = Student.query.all()
+    # ── Read filter values from the URL (empty string if not provided) ──
+    name   = request.args.get("name", "").strip()
+    status = request.args.get("status", "").strip()
+    gender = request.args.get("gender", "").strip()
+    jamb   = request.args.get("jamb", "").strip()
 
-    # render_template() fills students.html with the data
-    # The variable name on the LEFT is what the template uses: {{ students }}
-    # The variable on the RIGHT is the Python variable we just created
-    return render_template("students.html", students=all_students)
+    # ── Start with all students (we'll narrow it down below) ──
+    # query is like saying "SELECT * FROM students" in SQL
+    query = Student.query
+
+    # ── Apply filters only if the user provided a value ──
+
+    if name:
+        # ilike() is case-insensitive "contains" search
+        # % means "anything before or after" the search term
+        # e.g. searching "john" matches "John Amadi", "Johnny", etc.
+        query = query.filter(
+            (Student.first_name.ilike(f"%{name}%")) |
+            (Student.last_name.ilike(f"%{name}%"))
+            # | means OR — match first name OR last name
+        )
+
+    if status:
+        # Exact match for status ("admitted", "undecided", "not admitted")
+        query = query.filter(Student.status == status)
+
+    if gender:
+        # Exact match for gender
+        query = query.filter(Student.gender == gender)
+
+    if jamb:
+        # Match exact JAMB score (convert string to integer first)
+        query = query.filter(Student.jamb_score == int(jamb))
+
+    # ── Execute the query and get the results ──
+    # .all() runs the final query and returns a list of matching students
+    all_students = query.all()
+
+    # Pass both the students AND the filter values back to the template
+    # so the search fields stay filled after searching
+    return render_template(
+        "students.html",
+        students=all_students,
+        name=name,
+        status=status,
+        gender=gender,
+        jamb=jamb
+    )
 
 
 # ── ROUTE 4: Student Detail Page ───────────────────────────────────
 @app.route("/student/<int:student_id>")
+@login_required
 def detail(student_id):
     """
     Fetches ONE specific student by their ID and displays their full profile.
@@ -181,6 +246,7 @@ def detail(student_id):
 
 # ── ROUTE 5: Update Admission Status (Async/AJAX) ──────────────────
 @app.route("/update-status/<int:student_id>", methods=["POST"])
+@login_required
 def update_status(student_id):
     """
     This route is NOT a visible page — it's called invisibly by JavaScript.
@@ -203,6 +269,122 @@ def update_status(student_id):
 
     # Send back a JSON response so JavaScript knows it worked
     return jsonify({"message": "Status updated successfully", "status": new_status})
+
+# ── ROUTE 6: Edit Student ───────────────────────────────────────────
+@app.route("/edit-student/<int:student_id>", methods=["GET", "POST"])
+@login_required
+def edit_student(student_id):
+    """
+    GET  → fetch the student from database and show a pre-filled form
+    POST → receive the updated form data and save changes to database
+    """
+
+    # Fetch the student or return 404 if not found
+    student = Student.query.get_or_404(student_id)
+
+    if request.method == "POST":
+        # ── Update all text fields with new values from the form ──
+        student.first_name  = request.form.get("first_name")
+        student.middle_name = request.form.get("middle_name")
+        student.last_name   = request.form.get("last_name")
+        student.email       = request.form.get("email")
+        student.dob         = request.form.get("dob")
+        student.gender      = request.form.get("gender")
+        student.phone       = request.form.get("phone")
+        student.address     = request.form.get("address")
+        student.state       = request.form.get("state")
+        student.lga         = request.form.get("local-govt-area")
+        student.next_of_kin = request.form.get("next_of_kin")
+        student.jamb_score  = int(request.form.get("jamb_score"))
+
+        # ── Handle image update (only if a new image was uploaded) ──
+        image = request.files.get("image")
+
+        if image and image.filename != "" and allowed_file(image.filename):
+            # A new image was uploaded — save it and update the filename
+            filename = secure_filename(image.filename)
+            save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            image.save(save_path)
+            student.image = filename
+        # If no new image uploaded, keep the existing one (do nothing)
+
+        # ── Save the changes to the database ──
+        # No need for db.session.add() here because the student object
+        # is already in the database — we just modified it directly
+        db.session.commit()
+
+        flash("Student record updated successfully!", "success")
+        return redirect(url_for("students"))
+
+    # GET request — just show the pre-filled edit form
+    return render_template("edit.html", student=student)
+
+
+# ── ROUTE 7: Delete Student ─────────────────────────────────────────
+@app.route("/delete-student/<int:student_id>", methods=["POST"])
+@login_required
+def delete_student(student_id):
+    """
+    Deletes a student record from the database.
+    Only accepts POST requests for security —
+    you don't want someone deleting records just by visiting a URL!
+    """
+
+    # Fetch the student or return 404 if not found
+    student = Student.query.get_or_404(student_id)
+
+    # Delete the student record from the database
+    db.session.delete(student)
+    db.session.commit()
+
+    flash("Student record deleted successfully!", "success")
+    return redirect(url_for("students"))
+
+
+
+# ── ROUTE 8: Login Page ─────────────────────────────────────────────
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """
+    GET  → show the login form
+    POST → check credentials, create session if correct
+    """
+
+    # If already logged in, go straight to students table
+    if "admin" in session:
+        return redirect(url_for("students"))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        # Check if credentials match what we set in config
+        if (username == app.config["ADMIN_USERNAME"] and
+                password == app.config["ADMIN_PASSWORD"]):
+
+            # Create a session — this is like giving the user a pass
+            # session is a dictionary that persists across requests
+            session["admin"] = username
+            flash("Welcome back, Admin!", "success")
+            return redirect(url_for("students"))
+        else:
+            # Wrong credentials
+            flash("Invalid username or password. Try again.", "error")
+
+    return render_template("login.html")
+
+
+# ── ROUTE 9: Logout ─────────────────────────────────────────────────
+@app.route("/logout")
+def logout():
+    """
+    Clears the session (removes the pass) and redirects to login page.
+    """
+    session.pop("admin", None)
+    # pop() removes the "admin" key from the session
+    # None means don't crash if "admin" isn't in the session
+    flash("You have been logged out.", "success")
+    return redirect(url_for("login"))
 
 
 # ── Run the app ────────────────────────────────────────────────────

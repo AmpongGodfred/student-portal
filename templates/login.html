@@ -1,0 +1,50 @@
+<!-- login.html -->
+<!-- Admin login page -->
+
+{% extends "base.html" %}
+
+{% block title %}Admin Login — Student Portal{% endblock %}
+
+{% block content %}
+
+<section class="login-section">
+  <div class="login-container">
+
+    <!-- Lock icon -->
+    <div class="login-icon">🔐</div>
+
+    <h2>Admin Login</h2>
+    <p class="form-subtitle">Enter your credentials to access the portal</p>
+
+    <!-- Flash messages (wrong password etc.) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('login') }}" method="POST">
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username"
+               placeholder="Enter username" required/>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password"
+               placeholder="Enter password" required/>
+      </div>
+
+      <div class="form-group center">
+        <button type="submit" class="btn-primary">Login</button>
+      </div>
+
+    </form>
+  </div>
+</section>
+
+{% endblock %}

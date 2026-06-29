@@ -23,8 +23,15 @@
 
         <!-- Navigation links -->
         <ul class="nav-links">
-        <li><a href="{{ url_for('index') }}">Home</a></li>
-        <li><a href="{{ url_for('form') }}">Get Started</a></li>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+
+            {% if session.get("admin") %}
+                <li><a href="{{ url_for('form') }}">Add Student</a></li>
+                <li><a href="{{ url_for('students') }}">All Students</a></li>
+                <li><a href="{{ url_for('logout') }}" class="btn-logout">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">Get Started</a></li>
+            {% endif %}
         </ul>
     </nav>
     <!-- ── END NAVBAR ─────────────────────────────────────────── -->
